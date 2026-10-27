@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://github.com/qxmcu/wave/actions/workflows/ci.yml"><img src="https://github.com/qxmcu/wave/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/qxmcu/wave/releases/latest"><img src="https://img.shields.io/github/v/release/qxmcu/wave" alt="Release"></a>
-  <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux-lightgrey" alt="Platforms">
+  <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey" alt="Platforms">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT"></a>
 </p>
 
@@ -49,6 +49,9 @@ Download the latest build from [Releases](https://github.com/qxmcu/wave/releases
   signed yet: right-click → Open the first time, or run
   `xattr -cr /Applications/Wave.app`.
 - **Linux**: `.AppImage`, `.deb` or `.rpm`.
+- **Windows**: `Wave-1.0.0-win-x64.exe` for most PCs (`arm64` and `ia32`
+  installers are also available). The installer is not signed yet: if
+  SmartScreen warns you, click More info → Run anyway.
 
 ## Development
 
@@ -59,7 +62,7 @@ npm install
 npm run dev          # start the app with hot reload
 npm test             # unit + API tests
 npm run typecheck
-npm run build:linux  # or build:mac
+npm run build:linux  # or build:mac, build:win
 ```
 
 Spotify sign-in needs a Client ID: see [docs/ACCOUNTS.md](docs/ACCOUNTS.md).
@@ -69,5 +72,7 @@ Contributing: [CONTRIBUTING.md](CONTRIBUTING.md).
 ## License
 
 [MIT](LICENSE). The original UI is © algerkong (AlgerMusicPlayer, MIT).
+
 ## PS
+
 this is a vibecoded project i made for funsies if you like it do use but note that bugs are expected everywhere.
