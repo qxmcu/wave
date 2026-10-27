@@ -20,7 +20,7 @@ export default {
     language: '言語設定',
     languageDesc: '表示言語を切り替え',
     tokenManagement: 'Cookie管理',
-    tokenManagementDesc: 'NetEase Cloud MusicログインCookieを管理',
+    tokenManagementDesc: 'YouTube Music・Spotify・Apple Music アカウントを管理',
     tokenStatus: '現在のCookieステータス',
     tokenSet: '設定済み',
     tokenNotSet: '未設定',
@@ -69,7 +69,7 @@ export default {
       add: '選択した曲のみ追加する'
     },
     quality: '音質設定',
-    qualityDesc: '音楽再生の音質を選択（NetEase Cloud VIP）',
+    qualityDesc: '音楽再生の音質を選択（YouTube Music）',
     qualityOptions: {
       standard: '標準',
       higher: '高音質',
@@ -135,7 +135,7 @@ export default {
       migu: 'Migu',
       kugou: 'Kugou',
       kuwo: 'Kuwo',
-      pyncmd: 'NetEase (内蔵)',
+      pyncmd: 'YouTube Music (内蔵)',
       qq: 'QQ Music',
       joox: 'JOOX',
       bilibili: 'Bilibili',
@@ -531,7 +531,7 @@ export default {
   },
   cookie: {
     title: 'Cookie設定',
-    description: 'NetEase Cloud MusicのCookieを入力してください：',
+    description: 'Spotify Client ID を入力してください：',
     placeholder: '完全なCookieを貼り付けてください...',
     help: {
       format: 'Cookieは通常「MUSIC_U=」で始まります',

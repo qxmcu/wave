@@ -90,26 +90,25 @@ describe('registry: orderedProviders', () => {
     expect(builtinProviders.map((p) => p.key)).toEqual([
       'customApi',
       'netease',
-      'gdmusic',
-      'pyncmd'
+      'gdmusic'
     ]);
   });
 
   it('未配置排序时按注册表默认序，失效键不进链', () => {
     const { orderedProviders } = useMusicSourceRegistry();
-    mockSetData.enabledMusicSources = ['gdmusic', 'pyncmd', 'not-exist-key'];
+    mockSetData.enabledMusicSources = ['gdmusic', 'netease', 'pyncmd', 'not-exist-key'];
 
     const keys = orderedProviders().map((p) => p.key);
-    // 'not-exist-key' 已卸载/不存在 → 剔除；其余按默认序（gdmusic 在 pyncmd 前）
-    expect(keys).toEqual(['gdmusic', 'pyncmd']);
+    // 'not-exist-key' / 已移除的 pyncmd → 剔除；其余按默认序（netease 在 gdmusic 前）
+    expect(keys).toEqual(['netease', 'gdmusic']);
   });
 
   it('musicSourceOrder 决定尝试顺序', () => {
     const { orderedProviders } = useMusicSourceRegistry();
-    mockSetData.enabledMusicSources = ['pyncmd', 'gdmusic', 'netease'];
-    mockSetData.musicSourceOrder = ['netease', 'pyncmd', 'gdmusic'];
+    mockSetData.enabledMusicSources = ['customApi', 'gdmusic', 'netease'];
+    mockSetData.musicSourceOrder = ['gdmusic', 'netease', 'customApi'];
 
-    expect(orderedProviders().map((p) => p.key)).toEqual(['netease', 'pyncmd', 'gdmusic']);
+    expect(orderedProviders().map((p) => p.key)).toEqual(['gdmusic', 'netease', 'customApi']);
   });
 
   it('歌曲级覆盖优先于全局集合', () => {
@@ -170,15 +169,17 @@ describe('migration: migrateLegacyMusicSources', () => {
     expect(plugins[0].id).toBe(hashMusicSource(lxScript.script));
 
     // 旧 key remap：lxMusic → plugin:<id>；custom → customApi；migu 原样
+    // Wave：YouTube Music 主音源（key netease）始终启用并置前
     expect(mockSetData.enabledMusicSources).toEqual([
+      'netease',
       `plugin:${hashMusicSource(lxScript.script)}`,
       'customApi',
       'migu'
     ]);
 
-    // 排序已初始化（含 customApi/netease 在前）
-    expect(mockSetData.musicSourceOrder[0]).toBe('customApi');
-    expect(mockSetData.musicSourceOrder[1]).toBe('netease');
+    // 排序已初始化（netease/customApi 在前）
+    expect(mockSetData.musicSourceOrder[0]).toBe('netease');
+    expect(mockSetData.musicSourceOrder[1]).toBe('customApi');
     // 幂等标记
     expect(mockSetData.musicSourceUnifiedMigrated).toBe(true);
   });

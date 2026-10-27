@@ -20,7 +20,7 @@ export default {
     language: 'Language Settings',
     languageDesc: 'Change display language',
     tokenManagement: 'Cookie Management',
-    tokenManagementDesc: 'Manage NetEase Cloud Music login Cookie',
+    tokenManagementDesc: 'Manage connected YouTube Music, Spotify and Apple Music accounts',
     tokenStatus: 'Current Cookie Status',
     tokenSet: 'Set',
     tokenNotSet: 'Not Set',
@@ -139,7 +139,7 @@ export default {
       migu: 'Migu',
       kugou: 'Kugou',
       kuwo: 'Kuwo',
-      pyncmd: 'NetEase (Built-in)',
+      pyncmd: 'YouTube Music (Built-in)',
       qq: 'QQ Music',
       joox: 'JOOX',
       bilibili: 'Bilibili',
@@ -533,7 +533,7 @@ export default {
   },
   cookie: {
     title: 'Cookie Settings',
-    description: 'Please enter NetEase Cloud Music Cookie:',
+    description: 'Please enter your Spotify Client ID:',
     placeholder: 'Please paste the complete Cookie...',
     help: {
       format: 'Cookie usually starts with "MUSIC_U="',

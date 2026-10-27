@@ -1,100 +1,50 @@
-<h2 align="center">🎵 Alger Music Player</h2>
-<div align="center">
-<div align="center">
-  <a href="https://github.com/algerkong/AlgerMusicPlayer/stargazers">
-    <img src="https://img.shields.io/github/stars/algerkong/AlgerMusicPlayer?style=for-the-badge&logo=github&label=Stars&logoColor=white&color=22c55e" alt="GitHub stars">
-  </a>
-  <a href="https://github.com/algerkong/AlgerMusicPlayer/releases">
-    <img src="https://img.shields.io/github/v/release/algerkong/AlgerMusicPlayer?style=for-the-badge&logo=github&label=Release&logoColor=white&color=1a67af" alt="GitHub release">
-  </a>
-  <a href="https://pd.qq.com/s/cs056n33q?b=5">
-    <img src="https://img.shields.io/badge/QQ频道-algermusic-blue?style=for-the-badge&color=yellow" alt="加入频道">
-  </a>
-  <a href="https://t.me/+9efsKRuvKBk2NWVl">
-    <img src="https://img.shields.io/badge/AlgerMusic-blue?style=for-the-badge&logo=telegram&logoColor=white&label=Telegram" alt="Telegram">
-  </a>
-   <a href="https://donate.alger.fun/">
-    <img src="https://img.shields.io/badge/%E9%A1%B9%E7%9B%AE%E6%8D%90%E8%B5%A0-blue?style=for-the-badge&logo=telegram&logoColor=pink&color=pink&label=%E8%B5%9E%E5%8A%A9" alt="赞助">
-  </a>
-</div>
-</div>
-<div align="center">
-  <a href="https://hellogithub.com/repository/607b849c598d48e08fe38789d156ebdc" target="_blank"><img src="https://api.hellogithub.com/v1/widgets/recommend.svg?rid=607b849c598d48e08fe38789d156ebdc&claim_uid=ObuMXUfeHBmk9TI&theme=neutral" alt="Featured｜HelloGitHub" width="160" height="32" /></a>
-</div>
+<h2 align="center">🌊 Wave</h2>
 
-[项目下安装以及常用问题文档](https://www.yuque.com/alger-pfg5q/ip4f1a/bmgmfmghnhgwghkm?singleDoc#)
+Wave is a desktop music player for **YouTube Music** and **Spotify**, with playlist import from
+**Apple Music, YouTube, Spotify and Amazon Music**. It is built on the UI of
+[AlgerMusicPlayer](https://github.com/algerkong/AlgerMusicPlayer) (MIT), with the NetEase Cloud Music
+backend replaced by a new local backend in `src/main/wave`.
 
-主要功能如下
+## Features
 
-- 🎵 音乐推荐
-- 🔐 账号登录与同步
-- 📝 功能
-  - 播放历史记录
-  - 歌曲收藏管理
-  - 歌单 MV 排行榜 每日推荐
-  - 自定义快捷键配置（全局或应用内）
-- 🎨 界面与交互
-  - 沉浸式歌词显示（点击左下角封面进入）
-  - 独立桌面歌词窗口
-  - 明暗主题切换
-  - 迷你模式
-  - 状态栏控制
-  - 多语言支持
-- 🎼 音乐功能
-  - 支持歌单、MV、专辑等完整音乐服务
-  - 音乐资源解析（基于 @unblockneteasemusic/server）
-  - EQ均衡器
-  - 定时播放 远程控制播放 倍速播放
-  - 高品质音乐
-  - 音乐文件下载
-  - 搜索 MV 音乐 专辑 歌单 bilibili
-  - 音乐单独选择音源解析
-- 🚀 技术特性
-  - 本地化服务，无需依赖在线API (基于 netease-cloud-music-api)
-  - 全平台适配（Desktop & Web & Mobile Web & Android<测试> & ios<后续>）
+- Search, browse, charts, new releases, artist/album pages and radio from YouTube Music
+- Playback of YouTube Music audio; Spotify, Apple Music and imported tracks are matched to the same
+  recording on YouTube Music (Spotify only allows streaming inside its own apps)
+- Synced lyrics from [LRCLIB](https://lrclib.net), falling back to YouTube Music lyrics
+- **Sign in with Google** (YouTube Music) — library playlists and likes sync automatically, and an
+  existing Google session is picked up on start-up
+- **Sign in with Spotify** — playlists and Liked Songs sync automatically
+- **Sign in with Apple ID** (MusicKit) — Apple Music library playlists sync automatically
+- Playlist import (Playlist → Import) from:
+  - YouTube / YouTube Music playlist, album and video links
+  - Spotify playlist, album and track links (works without signing in)
+  - Apple Music playlist and album links (works without signing in)
+  - Amazon Music and other shared pages that publish schema.org playlist data
+  - Text (`Song - Artist` per line) and CSV exports (Exportify, TuneMyMusic, Soundiiz…)
+- Local library: liked songs, your own playlists, listening history, downloads, local files, EQ,
+  desktop lyrics, mini player and everything else from the original UI
 
-## 项目简介
+## Accounts and credentials
 
-一个第三方音乐播放器、本地服务、桌面歌词、音乐下载、最高音质
+No Firebase or other backend service is needed: everything runs locally inside the app.
 
-## 预览地址
+| Service | What you need |
+| --- | --- |
+| YouTube Music | Nothing. "Sign in with Google" opens Google's own sign-in page. |
+| Spotify | A free Spotify app **Client ID**. Create an app at <https://developer.spotify.com/dashboard>, add the redirect URI `http://127.0.0.1:8898/callback`, enable *Web API*, and paste the Client ID in the Spotify tab of the login page (or put `MAIN_VITE_SPOTIFY_CLIENT_ID=...` in a `.env` file before building so users never see this step). New Spotify apps are in development mode: add each user's Spotify email under *User Management*. |
+| Apple Music | A MusicKit developer token, which requires an Apple Developer account. Paste a token, or paste the `.p8` MusicKit private key and enter its Team ID and Key ID — Wave signs tokens locally. To ship a token with the app, put `MAIN_VITE_APPLE_DEVELOPER_TOKEN=...` in `.env` before building. Public Apple Music links import without any of this. |
+| Amazon Music | Amazon has no public API; shared links work when the page exposes its track list, otherwise export the playlist to CSV and import the file. |
 
-[http://music.alger.fun/](http://music.alger.fun/)
-
-## 软件截图
-
-![首页白](./docs/image.png)
-![首页黑](./docs/image3.png)
-![歌词](./docs/image6.png)
-![桌面歌词](./docs/image2.png)
-![设置页面](./docs/image4.png)
-![音乐远程控制](./docs/image5.png)
-
-## 项目启动
+## Development
 
 ```bash
 npm install
-npm run dev
+npm run dev          # run the app
+npm test             # unit and API tests
+npm run typecheck
+npm run build:win    # or build:mac / build:linux
 ```
 
-## 开发文档
+## License
 
-点击这里[开发文档](./DEV.md)
-
-## 赞赏☕️
-
-[赞赏列表](http://donate.alger.fun/)
-| 微信赞赏 | 支付宝赞赏 |
-| :--------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------: |
-| <img src="https://github.com/algerkong/algerkong/blob/main/wechat.jpg?raw=true" alt="WeChat QRcode" width=200> <br><small>喝点咖啡继续干</small> | <img src="https://github.com/algerkong/algerkong/blob/main/alipay.jpg?raw=true" alt="Wechat QRcode" width=200> <br><small>来包辣条吧~</small> |
-
-## 项目统计
-
-[![Star History Chart](https://api.star-history.com/chart?repos=algerkong%2FAlgerMusicPlayer&type=date&legend=top-left)](https://www.star-history.com/?repos=algerkong%2FAlgerMusicPlayer&type=date&legend=top-left)
-
-## 欢迎提Issues
-
-## 声明
-
-本软件仅用于学习交流，禁止用于商业用途，否则后果自负。
-希望大家还是要多多支持官方正版，此软件仅用作开发教学。
+MIT. Original work © Alger (AlgerMusicPlayer); see [LICENSE](LICENSE).

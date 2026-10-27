@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { useMessage } from 'naive-ui';
-import { onBeforeUnmount, onMounted } from 'vue';
+import { onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-import { getUserDetail } from '@/api/login';
 import { isElectron, setAnimationClass } from '@/utils';
+import { getWaveAuthStatus, waveSignIn } from '@/utils/waveAuth';
 
 defineOptions({
   name: 'CookieLogin'
@@ -21,9 +21,10 @@ const emit = defineEmits<Emits>();
 const { t } = useI18n();
 const message = useMessage();
 
+// Spotify 应用 Client ID（PKCE 登录无需 secret）
 const token = ref('');
+const loading = ref(false);
 
-// Token登录
 const loginByToken = async () => {
   if (!token.value.trim()) {
     const errorMsg = t('login.message.tokenRequired');
@@ -33,82 +34,35 @@ const loginByToken = async () => {
   }
 
   try {
-    // 直接设置token到localStorage
-    localStorage.setItem('token', token.value.trim());
-
-    // 获取用户信息验证token有效性
-    const user = await getUserDetail();
-    if (user.data && user.data.profile) {
-      const successMsg = t('login.message.tokenLoginSuccess');
-      message.success(successMsg);
-      emit('loginSuccess', user.data.profile, 'cookie');
+    loading.value = true;
+    const profile = await waveSignIn('sp', token.value.trim());
+    if (profile) {
+      message.success(t('login.message.tokenLoginSuccess'));
+      emit('loginSuccess', profile, 'cookie');
     } else {
-      // token无效，清除localStorage
-      localStorage.removeItem('token');
       const errorMsg = t('login.message.tokenInvalid');
       message.error(errorMsg);
       emit('loginError', errorMsg);
     }
   } catch (error) {
-    // token无效，清除localStorage
-    localStorage.removeItem('token');
     const errorMsg = t('login.message.tokenInvalid');
     message.error(errorMsg);
     emit('loginError', errorMsg);
-    console.error('Token登录失败:', error);
+    console.error('Spotify sign-in failed:', error);
+  } finally {
+    loading.value = false;
   }
 };
 
-// 自动获取Cookie
+// 打开 Spotify 开发者后台创建应用
 const autoGetCookie = () => {
-  if (!isElectron) {
-    message.error('此功能仅在桌面版中可用');
-    return;
-  }
-
   message.info(t('login.message.autoGetCookieTip'));
-  window.electron.ipcRenderer.send('open-login');
+  window.open('https://developer.spotify.com/dashboard/create', '_blank');
 };
 
-// 监听Cookie接收
-const handleCookieReceived = async (_event: any, cookieValue: string) => {
-  try {
-    // 设置Cookie到localStorage
-    localStorage.setItem('token', cookieValue);
-
-    // 验证Cookie有效性
-    const user = await getUserDetail();
-    if (user.data && user.data.profile) {
-      const successMsg = t('login.message.autoGetCookieSuccess');
-      message.success(successMsg);
-      emit('loginSuccess', user.data.profile, 'cookie');
-    } else {
-      localStorage.removeItem('token');
-      const errorMsg = t('login.message.autoGetCookieFailed');
-      message.error(errorMsg);
-      emit('loginError', errorMsg);
-    }
-  } catch (error) {
-    localStorage.removeItem('token');
-    const errorMsg = t('login.message.autoGetCookieFailed');
-    message.error(errorMsg);
-    emit('loginError', errorMsg);
-    console.error('自动获取Cookie失败:', error);
-  }
-};
-
-// 在组件挂载时添加监听器
-onMounted(() => {
-  if (isElectron) {
-    window.electron.ipcRenderer.on('send-cookies', handleCookieReceived);
-  }
-});
-
-// 在组件卸载时移除监听器
-onBeforeUnmount(() => {
-  if (isElectron) {
-    window.electron.ipcRenderer.removeAllListeners('send-cookies');
-  }
+onMounted(async () => {
+  const status = await getWaveAuthStatus();
+  if (status?.spotifyClientId) token.value = status.spotifyClientId;
 });
 </script>
 
@@ -124,7 +78,7 @@ onBeforeUnmount(() => {
       />
     </div>
     <div class="text">{{ t('login.tokenTip') }}</div>
-    <n-button class="btn-login" @click="loginByToken()">{{
+    <n-button class="btn-login" :loading="loading" @click="loginByToken()">{{
       t('login.button.cookieLogin')
     }}</n-button>
     <n-button v-if="isElectron" class="btn-auto-cookie" @click="autoGetCookie()" type="info">

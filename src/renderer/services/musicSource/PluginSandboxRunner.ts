@@ -44,9 +44,7 @@ type WorkerHttpResponseMessage = {
 };
 
 type RunnerToWorkerMessage =
-  | WorkerInitializeMessage
-  | WorkerInvokeMessage
-  | WorkerHttpResponseMessage;
+  WorkerInitializeMessage | WorkerInvokeMessage | WorkerHttpResponseMessage;
 
 export type SandboxPluginRuntime = {
   platform?: string;

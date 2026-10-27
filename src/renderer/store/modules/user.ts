@@ -6,6 +6,7 @@ import { getLikedList } from '@/api/music';
 import { getUserAlbumSublist, getUserPlaylist } from '@/api/user';
 import type { IUserDetail } from '@/types/user';
 import { clearLoginStatus } from '@/utils/auth';
+import { waveSignOut } from '@/utils/waveAuth';
 
 interface UserData {
   userId: number;
@@ -55,6 +56,7 @@ export const useUserStore = defineStore('user', () => {
 
   const handleLogout = async () => {
     try {
+      await waveSignOut('all').catch(() => {});
       await logout();
       user.value = null;
       loginType.value = null;

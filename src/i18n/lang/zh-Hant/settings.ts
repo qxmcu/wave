@@ -20,7 +20,7 @@ export default {
     language: '語言設定',
     languageDesc: '切換顯示語言',
     tokenManagement: 'Cookie管理',
-    tokenManagementDesc: '管理網易雲音樂登入Cookie',
+    tokenManagementDesc: '管理 YouTube Music、Spotify、Apple Music 帳號',
     tokenStatus: '目前Cookie狀態',
     tokenSet: '已設定',
     tokenNotSet: '未設定',
@@ -66,7 +66,7 @@ export default {
       add: '僅將目前歌曲加入播放清單'
     },
     quality: '音質設定',
-    qualityDesc: '選擇音樂播放音質（網易云VIP）',
+    qualityDesc: '選擇音樂播放音質（YouTube Music）',
     qualityOptions: {
       standard: '標準',
       higher: '較高',
@@ -522,7 +522,7 @@ export default {
   },
   cookie: {
     title: 'Cookie設定',
-    description: '請輸入網易雲音樂的Cookie：',
+    description: '請輸入 Spotify Client ID：',
     placeholder: '請貼上完整的Cookie...',
     help: {
       format: 'Cookie通常以 "MUSIC_U=" 開頭',

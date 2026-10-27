@@ -76,7 +76,7 @@ const copyText = () => {
 };
 
 const toDonateList = () => {
-  window.open('http://donate.alger.fun/download', '_blank');
+  window.open('https://github.com/qxmcu/wave/releases', '_blank');
 };
 
 defineProps({

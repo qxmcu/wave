@@ -3,8 +3,8 @@ import { useMessage } from 'naive-ui';
 import { onMounted } from 'vue';
 import { useI18n } from 'vue-i18n';
 
-import { checkQr, createQr, getQrKey, getUserDetail } from '@/api/login';
 import { setAnimationClass } from '@/utils';
+import { getWaveAuthStatus, waveSignIn } from '@/utils/waveAuth';
 
 defineOptions({
   name: 'QrLogin'
@@ -21,110 +21,36 @@ const emit = defineEmits<Emits>();
 const { t } = useI18n();
 const message = useMessage();
 
-const qrUrl = ref<string>();
-const timerRef = ref(null);
-const qrStatus = ref<'loading' | 'active' | 'expired' | 'scanned' | 'confirmed'>('loading');
-const isRefreshing = ref(false);
+// Google 账号登录（YouTube Music）
+const qrStatus = ref<'active' | 'loading' | 'confirmed'>('active');
 
-const loadLogin = async () => {
+const signInWithGoogle = async () => {
   try {
-    isRefreshing.value = true;
     qrStatus.value = 'loading';
-
-    // 清理之前的定时器
-    if (timerRef.value) {
-      clearInterval(timerRef.value);
-      timerRef.value = null;
+    const profile = await waveSignIn('yt');
+    if (!profile) {
+      qrStatus.value = 'active';
+      const errorMsg = t('login.message.googleLoginCancelled');
+      message.warning(errorMsg);
+      emit('loginError', errorMsg);
+      return;
     }
-
-    const qrKey = await getQrKey();
-    const key = qrKey.data.data.unikey;
-    const { data } = await createQr(key);
-    qrUrl.value = data.data.qrimg;
-    qrStatus.value = 'active';
-
-    const timer = timerIsQr(key);
-    timerRef.value = timer as any;
+    qrStatus.value = 'confirmed';
+    message.success(t('login.message.loginSuccess'));
+    emit('loginSuccess', profile, 'cookie');
   } catch (error) {
-    console.error(t('login.message.loadError'), error);
-    qrStatus.value = 'expired';
+    qrStatus.value = 'active';
     const errorMsg = t('login.message.loadError');
     message.error(errorMsg);
     emit('loginError', errorMsg);
-  } finally {
-    isRefreshing.value = false;
+    console.error('Google sign-in failed:', error);
   }
 };
 
-const timerIsQr = (key: string) => {
-  const timer = setInterval(async () => {
-    try {
-      const { data } = await checkQr(key);
-
-      // 二维码过期或不存在
-      if (data.code === 800) {
-        qrStatus.value = 'expired';
-        clearInterval(timer);
-        timerRef.value = null;
-        message.warning(t('login.message.qrExpiredWarning'));
-        return;
-      }
-
-      // 等待扫码
-      if (data.code === 801) {
-        qrStatus.value = 'active';
-        return;
-      }
-
-      // 已扫码，等待确认
-      if (data.code === 802) {
-        qrStatus.value = 'scanned';
-        message.info(t('login.message.qrScannedInfo'));
-        return;
-      }
-
-      // 登录成功
-      if (data.code === 803) {
-        qrStatus.value = 'confirmed';
-        localStorage.setItem('token', data.cookie);
-        const user = await getUserDetail();
-        const successMsg = t('login.message.loginSuccess');
-        message.success(successMsg);
-        emit('loginSuccess', user.data.profile, 'qr');
-
-        clearInterval(timer);
-        timerRef.value = null;
-      }
-    } catch (error) {
-      console.error(t('login.message.qrCheckError'), error);
-      qrStatus.value = 'expired';
-      clearInterval(timer);
-      timerRef.value = null;
-      const errorMsg = t('login.message.qrCheckFailed');
-      message.error(errorMsg);
-      emit('loginError', errorMsg);
-    }
-  }, 3000);
-
-  return timer;
-};
-
-// 手动刷新二维码
-const refreshQr = () => {
-  loadLogin();
-};
-
-// 获取状态显示文本
 const getStatusText = () => {
   switch (qrStatus.value) {
     case 'loading':
-      return t('login.message.qrLoading');
-    case 'active':
-      return t('login.qrTip');
-    case 'expired':
-      return t('login.message.qrExpired');
-    case 'scanned':
-      return t('login.message.qrScanned');
+      return t('login.message.googleWaiting');
     case 'confirmed':
       return t('login.message.qrConfirmed');
     default:
@@ -132,14 +58,11 @@ const getStatusText = () => {
   }
 };
 
-onMounted(() => {
-  loadLogin();
-});
-
-onUnmounted(() => {
-  if (timerRef.value) {
-    clearInterval(timerRef.value);
-    timerRef.value = null;
+// 已登录 Google 时自动同步，无需再次登录
+onMounted(async () => {
+  const status = await getWaveAuthStatus();
+  if (status?.signedIn.yt) {
+    qrStatus.value = 'confirmed';
   }
 });
 </script>
@@ -148,43 +71,31 @@ onUnmounted(() => {
   <div class="qr-login" :class="setAnimationClass('animate__fadeInUp')">
     <div class="login-title">{{ t('login.title.qr') }}</div>
 
-    <!-- 二维码容器 -->
     <div class="qr-container">
-      <!-- 加载状态 -->
       <div v-if="qrStatus === 'loading'" class="qr-loading">
         <n-spin size="large" />
-        <div class="loading-text">{{ t('login.message.qrGenerating') }}</div>
+        <div class="loading-text">{{ t('login.message.googleWaiting') }}</div>
       </div>
 
-      <!-- 二维码图片 -->
-      <div v-else class="qr-image-wrapper" :class="{ expired: qrStatus === 'expired' }">
-        <img class="qr-img" :src="qrUrl" />
-
-        <!-- 过期遮罩 -->
-        <div v-if="qrStatus === 'expired'" class="expired-overlay">
-          <div class="expired-text">{{ t('login.message.qrExpiredShort') }}</div>
-          <n-button class="refresh-btn" type="primary" @click="refreshQr" :loading="isRefreshing">
-            {{ isRefreshing ? t('login.button.refreshing') : t('login.button.refresh') }}
-          </n-button>
+      <div v-else class="qr-image-wrapper">
+        <div class="qr-img qr-logo" @click="signInWithGoogle">
+          <i class="ri-youtube-fill"></i>
         </div>
 
-        <!-- 已扫码遮罩 -->
-        <div v-if="qrStatus === 'scanned'" class="scanned-overlay">
+        <div v-if="qrStatus === 'confirmed'" class="scanned-overlay">
           <div class="scanned-icon">✓</div>
           <div class="scanned-text">{{ t('login.message.qrScannedShort') }}</div>
         </div>
       </div>
     </div>
 
-    <!-- 状态文本 -->
-    <div class="text" :class="{ expired: qrStatus === 'expired', scanned: qrStatus === 'scanned' }">
+    <div class="text" :class="{ scanned: qrStatus === 'confirmed' }">
       {{ getStatusText() }}
     </div>
 
-    <!-- 手动刷新按钮 -->
-    <div v-if="qrStatus === 'active'" class="refresh-area">
-      <n-button text class="manual-refresh" @click="refreshQr" :loading="isRefreshing">
-        {{ t('login.button.refreshQr') }}
+    <div class="refresh-area">
+      <n-button class="btn-login" :loading="qrStatus === 'loading'" @click="signInWithGoogle">
+        <i class="ri-google-fill mr-2"></i>{{ t('login.button.googleLogin') }}
       </n-button>
     </div>
   </div>
@@ -265,6 +176,19 @@ onUnmounted(() => {
   &.scanned {
     @apply text-green-400;
   }
+}
+
+.qr-logo {
+  @apply flex items-center justify-center bg-white cursor-pointer;
+  font-size: 96px;
+  color: #ff0000;
+}
+
+.btn-login {
+  width: 250px;
+  height: 40px;
+  @apply text-white rounded-xl;
+  @apply bg-green-600 hover:bg-green-700 transition-colors;
 }
 
 .refresh-area {

@@ -121,6 +121,8 @@ export const migrateLegacyMusicSources = (): boolean => {
   // 2. 旧 key remap（全局勾选 + 歌曲级配置）
   const remap = buildLegacyKeyRemap();
   const enabledSources = remapKeys((data.enabledMusicSources || []) as string[], remap);
+  // Wave：YouTube Music 主音源始终启用
+  if (!enabledSources.includes('netease')) enabledSources.unshift('netease');
   remapSongLevelConfigs(remap);
 
   // 3. 初始化用户排序：默认序 = 自定义API → 网易云 → 插件（启用在前）→ GD → unblock 平台
@@ -128,7 +130,7 @@ export const migrateLegacyMusicSources = (): boolean => {
     .slice()
     .sort((a, b) => Number(b.enabled) - Number(a.enabled) || a.order - b.order)
     .map((p) => `plugin:${p.id}`);
-  const defaultOrder = ['customApi', 'netease', ...pluginKeys, 'gdmusic', 'pyncmd'];
+  const defaultOrder = ['netease', 'customApi', ...pluginKeys, 'gdmusic'];
 
   settingsStore.setSetData({
     musicSourcePlugins: plugins,

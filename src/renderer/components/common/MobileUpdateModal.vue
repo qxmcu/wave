@@ -169,7 +169,7 @@ const handleUpdate = async () => {
   const version = updateInfo.value.latestVersion;
 
   // Android APK 下载地址
-  const downloadUrl = `https://github.com/algerkong/AlgerMusicPlayer/releases/download/v${version}/AlgerMusicPlayer-${version}.apk`;
+  const downloadUrl = `https://github.com/qxmcu/wave/releases/download/v${version}/Wave-${version}.apk`;
 
   try {
     // 获取代理节点
@@ -188,8 +188,7 @@ const handleUpdate = async () => {
     console.error('打开下载链接失败:', error);
     // 回退到直接打开 GitHub Releases
     const releaseUrl =
-      updateInfo.value.releaseInfo?.html_url ||
-      'https://github.com/algerkong/AlgerMusicPlayer/releases/latest';
+      updateInfo.value.releaseInfo?.html_url || 'https://github.com/qxmcu/wave/releases/latest';
     window.open(releaseUrl, '_blank');
     closeModal();
   }

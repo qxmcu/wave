@@ -1,10 +1,10 @@
 {
-  "name": "AlgerMusicPlayer",
-  "version": "5.1.0",
-  "description": "Alger Music Player",
-  "author": "Alger <algerkc@qq.com>",
+  "name": "wave",
+  "version": "1.0.0",
+  "description": "Wave Music Player",
+  "author": "Wave <noreply@github.com>",
   "main": "./out/main/index.js",
-  "homepage": "https://github.com/algerkong/AlgerMusicPlayer",
+  "homepage": "https://github.com/qxmcu/wave",
   "scripts": {
     "prepare": "husky",
     "format": "prettier --write ./src",
@@ -132,13 +132,13 @@
     "vue-tsc": "^2.2.12"
   },
   "build": {
-    "appId": "com.alger.music",
-    "productName": "AlgerMusicPlayer",
+    "appId": "com.wave.music",
+    "productName": "Wave",
     "publish": [
       {
         "provider": "github",
-        "owner": "algerkong",
-        "repo": "AlgerMusicPlayer"
+        "owner": "qxmcu",
+        "repo": "wave"
       }
     ],
     "extraResources": [
@@ -171,7 +171,7 @@
       "identity": null,
       "type": "distribution",
       "binaries": [
-        "Contents/MacOS/AlgerMusicPlayer"
+        "Contents/MacOS/Wave"
       ]
     },
     "win": {
@@ -216,7 +216,7 @@
       ],
       "artifactName": "${productName}-${version}-linux-${arch}.${ext}",
       "category": "Audio",
-      "maintainer": "Alger <algerkc@qq.com>"
+      "maintainer": "Wave <noreply@github.com>"
     },
     "nsis": {
       "oneClick": false,
@@ -225,10 +225,10 @@
       "uninstallerIcon": "resources/icon.ico",
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "AlgerMusicPlayer",
+      "shortcutName": "Wave",
       "include": "build/installer.nsh",
       "deleteAppDataOnUninstall": true,
-      "uninstallDisplayName": "AlgerMusicPlayer"
+      "uninstallDisplayName": "Wave"
     }
   },
   "pnpm": {

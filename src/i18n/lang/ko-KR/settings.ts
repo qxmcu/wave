@@ -20,7 +20,7 @@ export default {
     language: '언어 설정',
     languageDesc: '표시 언어 전환',
     tokenManagement: 'Cookie 관리',
-    tokenManagementDesc: '넷이즈 클라우드 뮤직 로그인 Cookie 관리',
+    tokenManagementDesc: 'YouTube Music, Spotify, Apple Music 계정 관리',
     tokenStatus: '현재 Cookie 상태',
     tokenSet: '설정됨',
     tokenNotSet: '설정되지 않음',
@@ -69,7 +69,7 @@ export default {
       add: '선택한 곡만 추가'
     },
     quality: '음질 설정',
-    qualityDesc: '음악 재생 음질 선택 (넷이즈 클라우드 VIP)',
+    qualityDesc: '음악 재생 음질 선택 (YouTube Music)',
     qualityOptions: {
       standard: '표준',
       higher: '높음',
@@ -136,7 +136,7 @@ export default {
       migu: 'Migu',
       kugou: 'Kugou',
       kuwo: 'Kuwo',
-      pyncmd: 'NetEase (내장)',
+      pyncmd: 'YouTube Music (내장)',
       qq: 'QQ Music',
       joox: 'JOOX',
       bilibili: 'Bilibili',
@@ -532,7 +532,7 @@ export default {
   },
   cookie: {
     title: 'Cookie 설정',
-    description: '넷이즈 클라우드 뮤직의 Cookie를 입력하세요:',
+    description: 'Spotify Client ID를 입력하세요:',
     placeholder: '완전한 Cookie를 붙여넣으세요...',
     help: {
       format: 'Cookie는 일반적으로 "MUSIC_U="로 시작합니다',

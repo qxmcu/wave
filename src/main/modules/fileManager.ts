@@ -330,7 +330,7 @@ export function initializeFileManager() {
       try {
         const response = await fetch(url.toString(), {
           method: 'GET',
-          headers: { 'User-Agent': 'AlgerMusicPlayer/5.1' },
+          headers: { 'User-Agent': 'Wave/1.0' },
           signal: controller.signal
         });
         if (!response.ok) {

@@ -9,6 +9,20 @@
         :placeholder="t('login.placeholder.uid')"
         @keyup.enter="handleLogin"
       />
+      <input
+        v-if="showKeyFields"
+        v-model="teamId"
+        class="uid-input"
+        type="text"
+        :placeholder="t('login.placeholder.appleTeamId')"
+      />
+      <input
+        v-if="showKeyFields"
+        v-model="keyId"
+        class="uid-input"
+        type="text"
+        :placeholder="t('login.placeholder.appleKeyId')"
+      />
     </div>
     <div class="text">{{ t('login.uidTip') }}</div>
     <div class="warning-text">
@@ -24,7 +38,7 @@
 import { useMessage } from 'naive-ui';
 import { useI18n } from 'vue-i18n';
 
-import { loginByUid } from '@/api/login';
+import { getWaveAuthStatus, waveSignIn } from '@/utils/waveAuth';
 
 defineOptions({
   name: 'UidLogin'
@@ -50,15 +64,25 @@ const emit = defineEmits<Emits>();
 const { t } = useI18n();
 const message = useMessage();
 
-// 状态
+// 状态：MusicKit 开发者令牌，或 .p8 私钥 + Team ID + Key ID
 const uid = ref('');
+const teamId = ref('');
+const keyId = ref('');
 const loading = ref(false);
+const configured = ref(false);
+const showKeyFields = computed(() => uid.value.includes('BEGIN PRIVATE KEY'));
 
-// UID登录处理
+onMounted(async () => {
+  const status = await getWaveAuthStatus();
+  configured.value = Boolean(status?.appleConfigured);
+});
+
+// Apple ID 登录处理
 const handleLogin = async () => {
   if (props.disabled || loading.value) return;
 
-  if (!uid.value.trim()) {
+  const value = uid.value.trim();
+  if (!value && !configured.value) {
     const errorMsg = t('login.message.uidRequired');
     message.error(errorMsg);
     emit('loginError', errorMsg);
@@ -67,25 +91,24 @@ const handleLogin = async () => {
 
   try {
     loading.value = true;
-    const { data } = await loginByUid(uid.value);
+    const creds = !value
+      ? undefined
+      : showKeyFields.value
+        ? { privateKey: value, teamId: teamId.value.trim(), keyId: keyId.value.trim() }
+        : { developerToken: value };
+    const profile = await waveSignIn('am', creds);
 
-    if (data && data.profile) {
-      const successMsg = t('login.message.uidLoginSuccess');
-      message.success(successMsg);
-      emit('loginSuccess', data.profile, 'uid');
+    if (profile) {
+      message.success(t('login.message.uidLoginSuccess'));
+      emit('loginSuccess', profile, 'cookie');
     } else {
       const errorMsg = t('login.message.uidInvalid');
       message.error(errorMsg);
       emit('loginError', errorMsg);
     }
   } catch (error: any) {
-    console.error('UID登录失败:', error);
-    let errorMsg = t('login.message.uidLoginFailed');
-
-    if (error.response?.status === 404 || error.response?.data?.code === 404) {
-      errorMsg = t('login.message.uidInvalid');
-    }
-
+    console.error('Apple ID sign-in failed:', error);
+    const errorMsg = t('login.message.uidLoginFailed');
     message.error(errorMsg);
     emit('loginError', errorMsg);
   } finally {
@@ -96,6 +119,8 @@ const handleLogin = async () => {
 // 重置表单
 const reset = () => {
   uid.value = '';
+  teamId.value = '';
+  keyId.value = '';
   loading.value = false;
 };
 

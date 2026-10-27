@@ -34,14 +34,15 @@ const extractLegacyUrl = (result: unknown): string | undefined => {
   return undefined;
 };
 
-// ─── 网易云官方直连（默认第一位，含 VIP 下载口与试听判定） ────────────────
+// ─── YouTube Music（Wave 主音源；Spotify/Apple 等曲目匹配到 YouTube Music 播放） ──
+// key 沿用 'netease'，与歌曲 source 标记及存量配置保持一致
 
 export const neteaseProvider: MusicSourceProvider = {
   key: 'netease',
-  name: '网易云',
+  name: 'YouTube Music',
   kind: 'builtin',
-  icon: 'ri-netease-cloud-music-fill',
-  color: '#ec4141',
+  icon: 'ri-youtube-fill',
+  color: '#ff0000',
   builtin: true,
   available: true,
   resolve: async (song: SongResult, _quality: string, options) => {
@@ -80,7 +81,7 @@ export const customApiProvider: MusicSourceProvider = {
 
 export const gdmusicProvider: MusicSourceProvider = {
   key: 'gdmusic',
-  name: 'GD音乐台',
+  name: 'GD Music',
   kind: 'builtin',
   icon: 'ri-google-fill',
   color: '#4285f4',
@@ -103,9 +104,13 @@ export const gdmusicProvider: MusicSourceProvider = {
 //   migu    0/10 命中 → 上游已死，移除
 // enabledMusicSources 里的残留 key 由注册表的"失效键剔除"自动清理。
 
-const UNBLOCK_PLATFORMS = [
-  { key: 'pyncmd', name: 'pyncmd', icon: 'ri-netease-cloud-music-fill', color: '#ec4141' }
-] as const;
+// pyncmd 依赖网易云歌曲 ID，Wave 的曲目不再适用，已移除
+const UNBLOCK_PLATFORMS: readonly {
+  key: string;
+  name: string;
+  icon: string;
+  color: string;
+}[] = [];
 
 const UNBLOCK_TIMEOUT = 15000;
 

@@ -64,3 +64,6 @@ src/renderer/components.d.ts
 # 内部整理记录，不进公开仓库
 docs/private/
 docs/private/
+
+# Wave build-time credentials
+.env

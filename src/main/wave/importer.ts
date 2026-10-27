@@ -4,7 +4,7 @@ import * as apple from './apple';
 import { importFromWebPage, parseTextList } from './genericImport';
 import { mapLimit } from './http';
 import * as library from './library';
-import { matchToYouTube } from './matcher';
+import { matchedTrack, matchToYouTube } from './matcher';
 import * as spotify from './spotify';
 import type { ImportedList, ImportedTrack, WaveTrack } from './types';
 import * as youtube from './youtube';
@@ -129,6 +129,9 @@ async function resolveTracks(task: ImportTask, items: ImportedTrack[]): Promise<
         task.failed.push(`${item.title} - ${item.artists.join(', ')}`);
         return null;
       }
+      // Free-text lines carry no reliable artist: use the matched recording's metadata
+      const matched = matchedTrack(videoId);
+      if (!item.artists.length && matched) return matched;
       // Keep the original metadata (title/album/cover) but play the matched recording.
       const track: WaveTrack = {
         key: `yt:v:${videoId}`,

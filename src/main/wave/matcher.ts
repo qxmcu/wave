@@ -37,15 +37,24 @@ const overlap = (a: Set<string>, b: Set<string>) => {
 
 export function scoreCandidate(wanted: ImportedTrack, candidate: WaveTrack): number {
   let score = 0;
-  const wantedTitle = normalize(wanted.title);
-  const candTitle = normalize(candidate.title);
-  if (wantedTitle && wantedTitle === candTitle) score += 50;
-  else score += 40 * overlap(tokens(wanted.title), tokens(candidate.title));
-
-  const wantedArtists = tokens(wanted.artists.join(' '));
   const candArtists = tokens(candidate.artists.map((a) => a.name).join(' '));
-  if (wantedArtists.size) score += 30 * overlap(wantedArtists, candArtists);
-  else score += 10;
+  if (!wanted.artists.length) {
+    // Free text ("Song Artist"): the candidate's title and artist should both appear in it
+    const words = tokens(wanted.title);
+    const covered = (set: Set<string>) => {
+      if (!set.size) return 0;
+      let hit = 0;
+      set.forEach((t) => words.has(t) && hit++);
+      return hit / set.size;
+    };
+    score += 50 * covered(tokens(candidate.title)) + 30 * covered(candArtists);
+  } else {
+    const wantedTitle = normalize(wanted.title);
+    const candTitle = normalize(candidate.title);
+    if (wantedTitle && wantedTitle === candTitle) score += 50;
+    else score += 40 * overlap(tokens(wanted.title), tokens(candidate.title));
+    score += 30 * overlap(tokens(wanted.artists.join(' ')), candArtists);
+  }
 
   if (wanted.duration && candidate.duration) {
     const diff = Math.abs(wanted.duration - candidate.duration) / 1000;
@@ -80,6 +89,10 @@ const matchKey = (t: ImportedTrack) =>
     : `${normalize(t.title)}|${normalize(t.artists.join(' '))}|${Math.round((t.duration || 0) / 5000)}`;
 
 const inflight = new Map<string, Promise<string | null>>();
+// Metadata of recently matched recordings, so free-text imports get proper titles/artists
+const matchedTracks = new Map<string, WaveTrack>();
+
+export const matchedTrack = (videoId: string) => matchedTracks.get(videoId);
 
 /** Returns the YouTube video id for a track, or null when nothing plausible exists. */
 export async function matchToYouTube(track: ImportedTrack): Promise<string | null> {
@@ -107,6 +120,7 @@ export async function matchToYouTube(track: ImportedTrack): Promise<string | nul
       best = pickBest(track, candidates);
     }
     const videoId = best?.videoId || null;
+    if (best && videoId) matchedTracks.set(videoId, best);
     store.data.matches[key] = videoId;
     store.save();
     return videoId;

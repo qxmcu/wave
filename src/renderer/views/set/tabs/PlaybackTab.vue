@@ -132,7 +132,7 @@ import SSelect from '../SSelect.vue';
 const ALL_PLATFORMS: Platform[] = ['migu', 'kugou', 'kuwo', 'pyncmd'];
 
 const memberLinks = [
-  { name: '网易云音乐会员', url: 'https://music.163.com/store/vip' },
+  { name: 'YouTube Music Premium', url: 'https://www.youtube.com/musicpremium' },
   { name: 'QQ音乐会员', url: 'https://y.qq.com/portal/vipportal/' },
   { name: '酷狗音乐会员', url: 'https://vip.kugou.com/' }
 ];

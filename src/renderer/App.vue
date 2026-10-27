@@ -19,6 +19,7 @@ import { computed, nextTick, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
+import { getUserDetail } from '@/api/login';
 import DisclaimerModal from '@/components/common/DisclaimerModal.vue';
 import TrafficWarningDrawer from '@/components/TrafficWarningDrawer.vue';
 import { usePlayerStore } from '@/store/modules/player';
@@ -27,6 +28,7 @@ import { useSettingsStore } from '@/store/modules/settings';
 import { useUserStore } from '@/store/modules/user';
 import { isElectron, isLyricWindow } from '@/utils';
 import { checkLoginStatus } from '@/utils/auth';
+import { getWaveAuthStatus, WAVE_SESSION_TOKEN } from '@/utils/waveAuth';
 
 import { initAudioListeners, initMusicHook } from './hooks/MusicHook';
 import { audioService } from './services/audioService';
@@ -121,6 +123,24 @@ if (isElectron) {
       }
     }
   });
+}
+
+// 已登录的 YouTube Music / Spotify / Apple Music 账号自动同步资料库
+if (isElectron && !isLyricWindow.value) {
+  const syncWaveAccounts = async () => {
+    const status = await getWaveAuthStatus().catch(() => null);
+    const anySignedIn = Boolean(status && Object.values(status.signedIn).some(Boolean));
+    if (!anySignedIn) return;
+    localStorage.setItem('token', WAVE_SESSION_TOKEN);
+    const { data } = await getUserDetail().catch(() => ({ data: null as any }));
+    if (!data?.profile) return;
+    userStore.setUser(data.profile);
+    userStore.setLoginType('cookie');
+    await userStore.initializePlaylist().catch(() => {});
+    await playerStore.initializeFavoriteList().catch(() => {});
+  };
+  void syncWaveAccounts();
+  window.electron.ipcRenderer.on('wave-auth-changed', () => void syncWaveAccounts());
 }
 
 // 使用应用内快捷键

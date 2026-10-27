@@ -14,6 +14,9 @@ export interface SecretBox {
   decrypt: (cipher: string) => string;
 }
 
+/** Values baked in at build time via .env (electron-vite exposes MAIN_VITE_* to the main process). */
+const buildEnv: Record<string, string | undefined> = (import.meta as any).env || {};
+
 let box: SecretBox = { encrypt: (s) => s, decrypt: (s) => s };
 
 interface AccountFile {
@@ -53,7 +56,8 @@ export function initAccounts(secretBox?: SecretBox) {
   const sp = load<spotify.SpotifyTokens>('spotify');
   if (sp) spotify.setSpotifyTokens(sp);
   const am = load<apple.AppleCredentials>('apple');
-  if (am) apple.setAppleCredentials(am);
+  const bakedToken = buildEnv.MAIN_VITE_APPLE_DEVELOPER_TOKEN;
+  if (am || bakedToken) apple.setAppleCredentials({ developerToken: bakedToken, ...am });
 
   spotify.onSpotifyTokens((t) => save('spotify', t));
   apple.onAppleCredentials((c) => save('apple', c));
@@ -66,7 +70,7 @@ export function setGoogleCookie(cookie: string | null) {
 }
 
 export function getSpotifyClientId(): string {
-  return file().data.spotifyClientId || process.env.WAVE_SPOTIFY_CLIENT_ID || '';
+  return file().data.spotifyClientId || buildEnv.MAIN_VITE_SPOTIFY_CLIENT_ID || '';
 }
 
 export function setSpotifyClientId(id: string) {

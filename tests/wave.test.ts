@@ -284,3 +284,20 @@ describe('importers', () => {
     expect(parseIsoDuration('bad')).toBeUndefined();
   });
 });
+
+describe('free-text matching', () => {
+  it('matches "Song Artist" lines without a separator', () => {
+    const candidates: WaveTrack[] = [
+      { key: 'yt:v:1', videoId: '11111111111', title: 'Yellow', artists: [{ name: 'Coldplay' }] },
+      {
+        key: 'yt:v:2',
+        videoId: '22222222222',
+        title: 'Yellow Submarine',
+        artists: [{ name: 'The Beatles' }]
+      }
+    ];
+    expect(pickBest({ title: 'Yellow Coldplay', artists: [] }, candidates)?.videoId).toBe(
+      '11111111111'
+    );
+  });
+});

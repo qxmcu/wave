@@ -66,7 +66,7 @@
 
       <!-- 应用标题：Mac 靠左侧紧随控制按钮，其他系统靠左 -->
       <span class="title-bar__brand" :class="{ 'title-bar__brand--mac': isElectron && isMac }">
-        Alger Music
+        Wave
       </span>
     </div>
 
@@ -181,7 +181,7 @@ const {
 
 const openDownloadPage = () => {
   if (!isElectron) {
-    window.open('http://donate.alger.fun/download', '_blank');
+    window.open('https://github.com/qxmcu/wave/releases', '_blank');
   }
 };
 
