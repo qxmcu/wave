@@ -26,6 +26,9 @@ jobs:
           - id: linux
             os: ubuntu-latest
             build_command: npm run build:linux
+          - id: win
+            os: windows-latest
+            build_command: npm run build:win
 
     steps:
       - uses: actions/checkout@v4
@@ -64,6 +67,7 @@ jobs:
             dist/*.deb
             dist/*.rpm
             dist/*.AppImage
+            dist/*.exe
             dist/latest*.yml
             dist/*.blockmap
 
