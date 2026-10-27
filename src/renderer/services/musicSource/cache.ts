@@ -10,7 +10,11 @@ import { cloneDeep } from 'lodash';
 
 import { musicDB } from '@/hooks/MusicHook';
 
-const { saveData, getData, deleteData } = musicDB;
+// 延迟读取 musicDB：MusicHook 使用顶层 await 初始化 IndexedDB，打包后的模块求值顺序
+// 可能早于它完成，模块顶层解构会触发 TDZ（Cannot access 'musicDB' before initialization）
+const saveData: typeof musicDB.saveData = (...args) => musicDB.saveData(...args);
+const getData: typeof musicDB.getData = (...args) => musicDB.getData(...args);
+const deleteData: typeof musicDB.deleteData = (...args) => musicDB.deleteData(...args);
 
 export type CachedUrlEntry = {
   url: string;

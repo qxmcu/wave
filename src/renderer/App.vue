@@ -4,8 +4,6 @@
       <n-dialog-provider>
         <n-message-provider>
           <router-view></router-view>
-          <traffic-warning-drawer v-if="!isElectron"></traffic-warning-drawer>
-          <disclaimer-modal></disclaimer-modal>
         </n-message-provider>
       </n-dialog-provider>
     </n-config-provider>
@@ -19,16 +17,13 @@ import { computed, nextTick, onMounted, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { useRouter } from 'vue-router';
 
-import { getUserDetail } from '@/api/login';
-import DisclaimerModal from '@/components/common/DisclaimerModal.vue';
-import TrafficWarningDrawer from '@/components/TrafficWarningDrawer.vue';
 import { usePlayerStore } from '@/store/modules/player';
 import { usePlayerCoreStore } from '@/store/modules/playerCore';
 import { useSettingsStore } from '@/store/modules/settings';
 import { useUserStore } from '@/store/modules/user';
 import { isElectron, isLyricWindow } from '@/utils';
 import { checkLoginStatus } from '@/utils/auth';
-import { getWaveAuthStatus, WAVE_SESSION_TOKEN } from '@/utils/waveAuth';
+import { fetchWaveProfile, getWaveAuthStatus, WAVE_SESSION_TOKEN } from '@/utils/waveAuth';
 
 import { initAudioListeners, initMusicHook } from './hooks/MusicHook';
 import { audioService } from './services/audioService';
@@ -132,9 +127,9 @@ if (isElectron && !isLyricWindow.value) {
     const anySignedIn = Boolean(status && Object.values(status.signedIn).some(Boolean));
     if (!anySignedIn) return;
     localStorage.setItem('token', WAVE_SESSION_TOKEN);
-    const { data } = await getUserDetail().catch(() => ({ data: null as any }));
-    if (!data?.profile) return;
-    userStore.setUser(data.profile);
+    const profile = await fetchWaveProfile();
+    if (!profile) return;
+    userStore.setUser(profile);
     userStore.setLoginType('cookie');
     await userStore.initializePlaylist().catch(() => {});
     await playerStore.initializeFavoriteList().catch(() => {});

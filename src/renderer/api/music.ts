@@ -13,7 +13,9 @@ type MusicParseResult = {
   };
 };
 
-const { saveData, getData } = musicDB;
+// 延迟读取 musicDB，避免顶层 await 导致的模块求值顺序问题（TDZ）
+const saveData: typeof musicDB.saveData = (...args) => musicDB.saveData(...args);
+const getData: typeof musicDB.getData = (...args) => musicDB.getData(...args);
 
 // 将 FM 歌曲移至垃圾桶（不喜欢）
 export const fmTrash = (id: number) => {

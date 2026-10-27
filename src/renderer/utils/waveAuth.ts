@@ -1,4 +1,3 @@
-import { getUserDetail } from '@/api/login';
 import { isElectron } from '@/utils';
 
 /**
@@ -34,7 +33,13 @@ export const waveSignIn = async (service: WaveService, arg?: unknown): Promise<a
   const ok = await window.electron.ipcRenderer.invoke(signInChannel[service], arg);
   if (!ok) return null;
   localStorage.setItem('token', WAVE_SESSION_TOKEN);
-  const { data } = await getUserDetail();
+  return fetchWaveProfile();
+};
+
+/** Reads the merged profile; imported lazily to keep the API layer out of startup import cycles. */
+export const fetchWaveProfile = async (): Promise<any | null> => {
+  const { getUserDetail } = await import('@/api/login');
+  const { data } = await getUserDetail().catch(() => ({ data: null as any }));
   return data?.profile || null;
 };
 
