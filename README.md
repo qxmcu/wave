@@ -69,3 +69,5 @@ Contributing: [CONTRIBUTING.md](CONTRIBUTING.md).
 ## License
 
 [MIT](LICENSE). The original UI is © algerkong (AlgerMusicPlayer, MIT).
+## PS
+this is a vibecoded project i made for funsies if you like it do use but note that bugs are expected everywhere.
