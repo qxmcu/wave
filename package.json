@@ -62,12 +62,12 @@
     "jsencrypt": "^3.5.4",
     "mpris-service": "^2.1.2",
     "music-metadata": "^11.10.3",
-    "netease-cloud-music-api-alger": "^4.32.0",
     "node-fetch": "^2.7.0",
     "node-id3": "^0.2.9",
     "node-machine-id": "^1.1.12",
     "pinia-plugin-persistedstate": "^4.7.1",
-    "vue-i18n": "^11.2.2"
+    "vue-i18n": "^11.2.2",
+    "youtubei.js": "^18.3.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.5.0",

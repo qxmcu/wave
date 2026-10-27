@@ -1,16 +1,10 @@
-import { ipcMain } from 'electron';
-import fs from 'fs';
-import os from 'os';
+import { app, ipcMain } from 'electron';
 import path from 'path';
 
 import { getSharedStore } from './modules/config';
 import { type Platform, unblockMusic } from './unblockMusic';
-
-// 必须在 import netease-cloud-music-api-alger 之前创建 anonymous_token 文件
-// 否则模块加载时 readFileSync 会因文件不存在而崩溃
-if (!fs.existsSync(path.resolve(os.tmpdir(), 'anonymous_token'))) {
-  fs.writeFileSync(path.resolve(os.tmpdir(), 'anonymous_token'), '', 'utf-8');
-}
+import { startWaveApi } from './wave';
+import { initializeWaveAuth, secretBox } from './wave/auth';
 
 const store = getSharedStore();
 
@@ -68,12 +62,14 @@ async function startMusicApi(): Promise<void> {
   }
 
   try {
-    const server = require('netease-cloud-music-api-alger/server');
-    await server.serveNcmApi({
+    await startWaveApi({
       port,
       // 安全默认值：仅监听本机回环地址，避免对局域网暴露
-      host: '127.0.0.1'
+      host: '127.0.0.1',
+      dataDir: path.join(app.getPath('userData'), 'wave'),
+      secretBox
     });
+    initializeWaveAuth(port);
     console.log(`MUSIC API STARTED on port ${port}`);
   } catch (error) {
     console.error(`MUSIC API 启动失败:`, error);

@@ -8,7 +8,12 @@ import viteCompression from 'vite-plugin-compression';
 import VueDevTools from 'vite-plugin-vue-devtools';
 
 export default defineConfig({
-  main: {},
+  main: {
+    build: {
+      // youtubei.js is ESM-only; bundle it into the CommonJS main process
+      externalizeDeps: { exclude: ['youtubei.js'] }
+    }
+  },
   preload: {},
   renderer: {
     resolve: {
