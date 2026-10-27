@@ -1,0 +1,38 @@
+name: Bug report
+description: Something doesn't work
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Wave version
+      placeholder: 1.0.0
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: OS
+      options: [macOS (Apple Silicon), macOS (Intel), Linux]
+    validations:
+      required: true
+  - type: dropdown
+    id: service
+    attributes:
+      label: Service involved
+      multiple: true
+      options:
+        [YouTube Music, Spotify, Apple Music import, Amazon Music import, Text/CSV import, None]
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Open DevTools with Ctrl/Cmd+Shift+I and paste lines starting with [wave].
+      render: text
