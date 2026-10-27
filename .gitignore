@@ -1,0 +1,66 @@
+node_modules
+.DS_Store
+
+dist
+dist-ssr
+*.local
+dist_electron
+.idea
+
+# lock
+yarn.lock
+pnpm-lock.yaml
+package-lock.json
+dist.zip
+
+.vscode
+
+bun.lockb
+bun.lock
+
+.env.*.local
+
+out
+
+.cursorrules
+
+.github/deploy_keys
+
+resources/android/**/*
+android/app/release
+
+.cursor
+.windsurf
+.agent
+.agents
+.claude
+.kiro
+.zcode
+CLAUDE.md
+AGENTS.md
+.sisyphus
+
+.worktrees
+
+
+
+.auto-imports.d.ts
+.components.d.ts
+
+# TypeScript 增量编译缓存
+*.tsbuildinfo
+
+# E2E 测试运行产物（截图、报告）
+tests/e2e-artifacts/
+
+# 本地 E2E / 集成测试，暂不入库
+scripts/e2e/
+tests/integration/
+tests/fixtures/
+
+src/renderer/auto-imports.d.ts
+src/renderer/components.d.ts
+
+# 内部整理记录，不进公开仓库
+docs/private/
+docs/private/
