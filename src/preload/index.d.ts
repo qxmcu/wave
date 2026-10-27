@@ -22,7 +22,6 @@ interface API {
   openLyric: () => void;
   sendLyric: (data: any) => void;
   sendSong: (data: any) => void;
-  unblockMusic: (id: number, data: any, enabledSources?: string[]) => Promise<any>;
   onLyricWindowClosed: (callback: () => void) => void;
   onLyricWindowReady: (callback: () => void) => void;
   getAppUpdateState: () => Promise<AppUpdateState>;

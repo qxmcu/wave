@@ -94,51 +94,8 @@ export const gdmusicProvider: MusicSourceProvider = {
   }
 };
 
-// ─── UnblockNeteaseMusic（按平台一 provider，key 沿用旧值零迁移） ──────────
-//
-// 2026-10-24 用 VIP 歌单 2605912264 两轮实测（命中率 + audio 元素解码验时长）：
-//   pyncmd  6/6 命中且时长精确匹配（126.net 正版直链）→ 保留
-//   gdmusic 6/6 命中且时长精确匹配（126.net 聚合搜索）→ 保留（见 gdmusicProvider）
-//   kuwo    6/6 "命中"但 0/6 时长正确 —— ID 映射错乱，返回的全是错歌 → 移除
-//   kugou   1/10 命中 → 上游已死，移除
-//   migu    0/10 命中 → 上游已死，移除
-// enabledMusicSources 里的残留 key 由注册表的"失效键剔除"自动清理。
-
-// pyncmd 依赖网易云歌曲 ID，Wave 的曲目不再适用，已移除
-const UNBLOCK_PLATFORMS: readonly {
-  key: string;
-  name: string;
-  icon: string;
-  color: string;
-}[] = [];
-
-const UNBLOCK_TIMEOUT = 15000;
-
-const createUnblockProvider = (
-  platform: (typeof UNBLOCK_PLATFORMS)[number]
-): MusicSourceProvider => ({
-  key: platform.key,
-  name: platform.name,
-  kind: 'builtin',
-  icon: platform.icon,
-  color: platform.color,
-  builtin: true,
-  available: true,
-  resolve: async (song: SongResult, _quality: string) => {
-    const result = await Promise.race([
-      window.api.unblockMusic(song.id as number, { ...song }, [platform.key]),
-      new Promise((resolve) => setTimeout(() => resolve(null), UNBLOCK_TIMEOUT))
-    ]);
-    const url = extractLegacyUrl(result);
-    return url ? toMediaSource(url) : null;
-  }
-});
-
-export const unblockProviders: MusicSourceProvider[] = UNBLOCK_PLATFORMS.map(createUnblockProvider);
-
 export const builtinProviders: MusicSourceProvider[] = [
   customApiProvider,
   neteaseProvider,
-  gdmusicProvider,
-  ...unblockProviders
+  gdmusicProvider
 ];

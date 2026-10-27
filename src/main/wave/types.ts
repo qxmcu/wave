@@ -81,7 +81,7 @@ export interface WaveVideo {
 }
 
 export interface AccountProfile {
-  service: 'yt' | 'sp' | 'am';
+  service: 'yt' | 'sp';
   name: string;
   avatar?: string;
   email?: string;

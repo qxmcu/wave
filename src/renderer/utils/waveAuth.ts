@@ -6,14 +6,13 @@ import { isElectron } from '@/utils';
  * process; afterwards the merged profile is read back through /user/account.
  */
 
-export type WaveService = 'yt' | 'sp' | 'am';
+export type WaveService = 'yt' | 'sp';
 
 export const WAVE_SESSION_TOKEN = 'wave-session';
 
 export interface WaveAuthStatus {
   signedIn: Record<WaveService, boolean>;
   spotifyClientId: string;
-  appleConfigured: boolean;
 }
 
 export const getWaveAuthStatus = async (): Promise<WaveAuthStatus | null> => {
@@ -23,13 +22,12 @@ export const getWaveAuthStatus = async (): Promise<WaveAuthStatus | null> => {
 
 const signInChannel: Record<WaveService, string> = {
   yt: 'wave-google-login',
-  sp: 'wave-spotify-login',
-  am: 'wave-apple-login'
+  sp: 'wave-spotify-login'
 };
 
 /**
  * Opens the sign-in window for a service and returns the user profile on success.
- * `arg` is the Spotify client id or the Apple MusicKit credentials.
+ * `arg` is the Spotify client id.
  */
 export const waveSignIn = async (service: WaveService, arg?: unknown): Promise<any | null> => {
   if (!isElectron) throw new Error('Sign-in is only available in the desktop app');

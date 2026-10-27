@@ -2,7 +2,6 @@ import express, { type Request, type Response } from 'express';
 import { Readable } from 'stream';
 
 import * as accounts from './accounts';
-import * as apple from './apple';
 import { BROWSER_UA } from './http';
 import { fromId, getTrack, parseKey, rememberTrack, toId } from './ids';
 import * as importer from './importer';
@@ -30,7 +29,7 @@ import * as youtube from './youtube';
 /**
  * HTTP API served on 127.0.0.1 for the renderer. Paths and response shapes
  * mirror the NetEase Cloud Music API the UI was built against, so the UI runs
- * unchanged on top of YouTube Music, Spotify and Apple Music.
+ * unchanged on top of YouTube Music and Spotify.
  */
 
 type Handler = (p: Record<string, any>, req: Request, res: Response) => Promise<unknown> | unknown;
@@ -42,6 +41,7 @@ export const setApiPort = (port: number) => {
 
 // ─── small caches ───────────────────────────────────────────────────────
 
+const MEMO_LIMIT = 300;
 const memo = new Map<string, { at: number; value: Promise<any> }>();
 function cached<T>(key: string, ttlMs: number, fn: () => Promise<T>): Promise<T> {
   const hit = memo.get(key);
@@ -51,6 +51,8 @@ function cached<T>(key: string, ttlMs: number, fn: () => Promise<T>): Promise<T>
     throw error;
   });
   memo.set(key, { at: Date.now(), value });
+  // Bounded: drop the oldest entries instead of growing for the whole session
+  while (memo.size > MEMO_LIMIT) memo.delete(memo.keys().next().value!);
   return value;
 }
 export const clearCaches = () => memo.clear();
@@ -119,7 +121,6 @@ async function loadPlaylist(key: string): Promise<WavePlaylist> {
     const a = await spotify.getAlbum(value);
     return { key, name: a.name, cover: a.cover, tracks: a.tracks, service: 'sp' };
   }
-  if (service === 'am' && kind === 'pl') return apple.getLibraryPlaylist(value);
   if (service === 'yt' && kind === 'al') {
     const a = await youtube.getAlbum(value);
     return { key, name: a.name, cover: a.cover, tracks: a.tracks, service: 'yt' };
@@ -178,8 +179,7 @@ async function userPlaylists(): Promise<WavePlaylist[]> {
   const remote = await cached('user-playlists', 5 * 60_000, async () => {
     const results = await Promise.allSettled([
       youtube.getLibraryPlaylists(),
-      spotify.getUserPlaylists(),
-      apple.getLibraryPlaylists()
+      spotify.getUserPlaylists()
     ]);
     results.forEach(
       (r) =>
@@ -746,8 +746,8 @@ const routes: Record<string, Handler> = {
   // NetEase-only login flows are not used by Wave
   '/login/qr/key': () => ok({ data: { code: 200, unikey: '' } }),
   '/login/qr/create': () => ok({ data: { qrurl: '', qrimg: '' } }),
-  '/login/qr/check': () => ({ code: 800, message: 'Use Google, Spotify or Apple sign-in' }),
-  '/login/cellphone': () => ({ code: 400, message: 'Use Google, Spotify or Apple sign-in' }),
+  '/login/qr/check': () => ({ code: 800, message: 'Use Google or Spotify sign-in' }),
+  '/login/cellphone': () => ({ code: 400, message: 'Use Google or Spotify sign-in' }),
 
   // import
   '/playlist/import/name/task/create': async (p) => {
@@ -1004,9 +1004,6 @@ export function createApp() {
 
   app.get('/wave/stream/:id', (req, res) => void proxyStream(req, res, false));
   app.get('/wave/video/:id', (req, res) => void proxyStream(req, res, true));
-  app.get('/wave/auth/apple/page', (_req, res) => {
-    res.type('html').send(apple.authPageHtml());
-  });
   app.get('/wave/auth/status', (_req, res) => {
     res.json({
       code: 200,

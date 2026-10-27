@@ -43,7 +43,6 @@
     "@electron-toolkit/preload": "^3.0.2",
     "@electron-toolkit/utils": "^4.0.0",
     "@httptoolkit/dbus-native": "^0.1.5",
-    "@unblockneteasemusic/server": "^0.27.10",
     "big-integer": "^1.6.52",
     "cheerio": "^1.2.0",
     "cors": "^2.8.5",

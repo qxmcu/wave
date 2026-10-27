@@ -2,28 +2,22 @@ export default {
   title: {
     qr: 'YouTube Music',
     phone: '電話番号ログイン',
-    cookie: 'Spotify',
-    uid: 'Apple Music'
+    cookie: 'Spotify'
   },
   qrTip: 'Google アカウントでログインして YouTube Music を同期',
-  phoneTip: 'Google、Spotify、Apple ID でログイン',
+  phoneTip: 'Google または Spotify でログイン',
   tokenTip:
     'Spotify アプリの Client ID を貼り付け（リダイレクト URI：http://127.0.0.1:8898/callback）',
-  uidTip: 'MusicKit デベロッパートークンまたは .p8 秘密鍵を貼り付けて Apple ID でサインイン',
   placeholder: {
     phone: '電話番号',
     password: 'パスワード',
-    cookie: 'Spotify Client ID',
-    uid: 'MusicKit デベロッパートークンまたは .p8 秘密鍵',
-    appleTeamId: 'Apple Team ID',
-    appleKeyId: 'MusicKit Key ID'
+    cookie: 'Spotify Client ID'
   },
   button: {
-    login: 'Apple ID でサインイン',
+    login: 'ログイン',
     switchToQr: 'YouTube Music',
     switchToPhone: '電話番号ログイン',
     switchToToken: 'Spotify',
-    switchToUid: 'Apple Music',
     backToQr: 'YouTube Music に戻る',
     cookieLogin: 'Spotify でログイン',
     autoGetCookie: 'Spotify Client ID を取得',
@@ -36,14 +30,10 @@ export default {
     loginSuccess: 'ログインしました',
     loginFailed: 'ログインに失敗しました',
     tokenLoginSuccess: 'Spotify に接続しました',
-    uidLoginSuccess: 'Apple Music に接続しました',
     loadError: 'ログインウィンドウを開けません',
     qrCheckError: 'ログイン状態の確認でエラー',
     tokenRequired: 'Spotify Client ID を入力してください',
     tokenInvalid: 'Spotify ログインに失敗しました。Client ID とリダイレクト URI を確認してください',
-    uidRequired: 'MusicKit デベロッパートークンを入力してください',
-    uidInvalid: 'Apple ID サインインがキャンセルされたか、トークンが無効です',
-    uidLoginFailed: 'Apple ID サインインに失敗しました',
     phoneRequired: '電話番号を入力してください',
     passwordRequired: 'パスワードを入力してください',
     phoneLoginFailed: 'ログインに失敗しました',
@@ -64,7 +54,5 @@ export default {
     googleWaiting: '新しいウィンドウで Google ログインを完了してください…',
     googleLoginCancelled: 'Google ログインはキャンセルされました'
   },
-  qrTitle: 'Google でログイン',
-  uidWarning:
-    'Apple Music のサインインには Apple Developer アカウントの MusicKit トークンが必要です。公開プレイリストのリンクはサインインなしでインポートできます。'
+  qrTitle: 'Google でログイン'
 };

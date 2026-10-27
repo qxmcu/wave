@@ -120,7 +120,10 @@ export async function matchToYouTube(track: ImportedTrack): Promise<string | nul
       best = pickBest(track, candidates);
     }
     const videoId = best?.videoId || null;
-    if (best && videoId) matchedTracks.set(videoId, best);
+    if (best && videoId) {
+      matchedTracks.set(videoId, best);
+      if (matchedTracks.size > 500) matchedTracks.delete(matchedTracks.keys().next().value!);
+    }
     store.data.matches[key] = videoId;
     store.save();
     return videoId;

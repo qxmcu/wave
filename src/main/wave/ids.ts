@@ -8,7 +8,8 @@ import type { WaveTrack } from './types';
  * stay resolvable across restarts.
  */
 
-const MAX_TRACK_CACHE = 60000;
+// Keeps the on-disk id map small (~5 MB) so writes stay cheap
+const MAX_TRACK_CACHE = 20000;
 
 interface IdStore {
   keys: Record<string, string>;
@@ -18,7 +19,7 @@ interface IdStore {
 
 let store: ReturnType<typeof jsonFile<IdStore>> | null = null;
 const getStore = () => {
-  if (!store) store = jsonFile<IdStore>('ids', { keys: {}, tracks: {}, order: [] });
+  if (!store) store = jsonFile<IdStore>('ids', { keys: {}, tracks: {}, order: [] }, 10_000);
   return store;
 };
 

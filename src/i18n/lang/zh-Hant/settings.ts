@@ -303,7 +303,7 @@ export default {
     manualUpdate: '官網更新',
     gotoGithub: '前往 Github',
     author: '作者',
-    authorDesc: 'algerkong 點個star🌟呗',
+    authorDesc: 'Wave，介面基於 algerkong 的 AlgerMusicPlayer',
     messages: {
       checkError: '檢查更新失敗，請稍後重試'
     }

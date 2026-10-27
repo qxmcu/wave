@@ -57,15 +57,6 @@
               }}</n-button>
             </div>
 
-            <!-- UID登录组件 -->
-            <div
-              v-else-if="activeMode === LoginMode.UID && !isTransitioning"
-              key="uid"
-              class="phone"
-            >
-              <uid-login @login-success="handleLoginSuccess" @login-error="handleLoginError" />
-            </div>
-
             <!-- Cookie登录组件 -->
             <div
               v-else-if="activeMode === LoginMode.COOKIE && !isTransitioning"
@@ -89,7 +80,6 @@ import { useRouter } from 'vue-router';
 import { loginByCellphone } from '@/api/login';
 import CookieLogin from '@/components/login/CookieLogin.vue';
 import QrLogin from '@/components/login/QrLogin.vue';
-import UidLogin from '@/components/login/UidLogin.vue';
 import { useUserStore } from '@/store/modules/user';
 import { setAnimationClass } from '@/utils';
 
@@ -118,8 +108,7 @@ const isTransitioning = ref(false);
 // 登录选项配置
 const loginTabs = computed(() => [
   { key: LoginMode.QR, label: t('login.title.qr') },
-  { key: LoginMode.COOKIE, label: t('login.title.cookie') },
-  { key: LoginMode.UID, label: t('login.title.uid') }
+  { key: LoginMode.COOKIE, label: t('login.title.cookie') }
 ]);
 
 // 手机号登录

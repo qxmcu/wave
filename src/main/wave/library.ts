@@ -28,6 +28,8 @@ interface LibraryData {
   history: { key: string; at: number; count: number }[];
   savedPlaylists: string[];
   savedAlbums: string[];
+  /** Metadata for every track the library references (the id cache is size-capped). */
+  tracks: Record<string, WaveTrack>;
 }
 
 const lib = () =>
@@ -36,10 +38,18 @@ const lib = () =>
     liked: [],
     history: [],
     savedPlaylists: [],
-    savedAlbums: []
+    savedAlbums: [],
+    tracks: {}
   });
 
-const trackFromKey = (key: string): WaveTrack | undefined => getTrack(key);
+const trackFromKey = (key: string): WaveTrack | undefined =>
+  lib().data.tracks[key] || getTrack(key);
+
+/** Stores a track's metadata in the library and registers its id. */
+const keep = (track: WaveTrack) => {
+  rememberTrack(track);
+  lib().data.tracks[track.key] = { ...lib().data.tracks[track.key], ...track };
+};
 
 const toWavePlaylist = (p: LocalPlaylist, withTracks: boolean): WavePlaylist => {
   const tracks = withTracks
@@ -91,7 +101,7 @@ export function createPlaylist(
   extra: Partial<LocalPlaylist> = {}
 ) {
   const key = `wave:pl:${crypto.randomUUID()}`;
-  tracks.forEach(rememberTrack);
+  tracks.forEach(keep);
   const playlist: LocalPlaylist = {
     key,
     name,
@@ -114,7 +124,7 @@ export function deletePlaylist(key: string) {
 
 export function addTracks(key: string, tracks: WaveTrack[]) {
   const store = lib();
-  tracks.forEach(rememberTrack);
+  tracks.forEach(keep);
   if (key === LIKED_PLAYLIST_KEY) {
     tracks.forEach((t) => setLiked(t, true));
     return true;
@@ -144,7 +154,7 @@ export function removeTracks(key: string, trackKeys: string[]) {
 
 export function setLiked(track: WaveTrack, liked: boolean) {
   const store = lib();
-  rememberTrack(track);
+  keep(track);
   store.data.liked = store.data.liked.filter((k) => k !== track.key);
   if (liked) store.data.liked.unshift(track.key);
   store.save();
@@ -156,7 +166,7 @@ export function likedKeys(): string[] {
 
 export function recordPlay(track: WaveTrack) {
   const store = lib();
-  rememberTrack(track);
+  keep(track);
   const existing = store.data.history.find((h) => h.key === track.key);
   if (existing) {
     existing.at = Date.now();

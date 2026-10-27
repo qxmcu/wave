@@ -312,7 +312,7 @@ export default {
     manualUpdate: '수동 업데이트',
     gotoGithub: 'Github로 이동',
     author: '작성자',
-    authorDesc: 'algerkong 별점🌟 부탁드려요',
+    authorDesc: 'Wave, UI는 algerkong의 AlgerMusicPlayer 기반',
     messages: {
       checkError: '업데이트 확인 실패, 나중에 다시 시도하세요'
     }

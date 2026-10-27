@@ -1,4 +1,3 @@
-import * as apple from './apple';
 import { jsonFile } from './persist';
 import * as spotify from './spotify';
 import type { AccountProfile } from './types';
@@ -22,7 +21,6 @@ let box: SecretBox = { encrypt: (s) => s, decrypt: (s) => s };
 interface AccountFile {
   google?: string;
   spotify?: string;
-  apple?: string;
   spotifyClientId?: string;
 }
 
@@ -55,12 +53,8 @@ export function initAccounts(secretBox?: SecretBox) {
   if (google?.cookie) youtube.setYouTubeCookie(google.cookie);
   const sp = load<spotify.SpotifyTokens>('spotify');
   if (sp) spotify.setSpotifyTokens(sp);
-  const am = load<apple.AppleCredentials>('apple');
-  const bakedToken = buildEnv.MAIN_VITE_APPLE_DEVELOPER_TOKEN;
-  if (am || bakedToken) apple.setAppleCredentials({ developerToken: bakedToken, ...am });
 
   spotify.onSpotifyTokens((t) => save('spotify', t));
-  apple.onAppleCredentials((c) => save('apple', c));
 }
 
 export function setGoogleCookie(cookie: string | null) {
@@ -77,16 +71,11 @@ export function setSpotifyClientId(id: string) {
   save('spotifyClientId', id.trim());
 }
 
-export function signOut(service: 'yt' | 'sp' | 'am' | 'all') {
+export function signOut(service: 'yt' | 'sp' | 'all') {
   if (service === 'yt' || service === 'all') setGoogleCookie(null);
   if (service === 'sp' || service === 'all') {
     spotify.setSpotifyTokens(null);
     save('spotify', null);
-  }
-  if (service === 'am' || service === 'all') {
-    const { musicUserToken: _drop, ...rest } = apple.getAppleCredentials();
-    apple.setAppleCredentials(rest);
-    save('apple', rest);
   }
   profileCache = null;
 }
@@ -94,8 +83,7 @@ export function signOut(service: 'yt' | 'sp' | 'am' | 'all') {
 export function signedInServices() {
   return {
     yt: youtube.isYouTubeSignedIn(),
-    sp: spotify.isSpotifySignedIn(),
-    am: apple.isAppleSignedIn()
+    sp: spotify.isSpotifySignedIn()
   };
 }
 
@@ -107,11 +95,7 @@ export function invalidateProfiles() {
 
 export async function getProfiles(): Promise<AccountProfile[]> {
   if (profileCache && Date.now() - profileCache.at < 10 * 60_000) return profileCache.list;
-  const results = await Promise.allSettled([
-    youtube.getAccount(),
-    spotify.getAccount(),
-    apple.getAccount()
-  ]);
+  const results = await Promise.allSettled([youtube.getAccount(), spotify.getAccount()]);
   const list = results
     .map((r) => (r.status === 'fulfilled' ? r.value : null))
     .filter(Boolean) as AccountProfile[];

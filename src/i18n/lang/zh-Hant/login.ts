@@ -2,27 +2,21 @@ export default {
   title: {
     qr: 'YouTube Music',
     phone: '手機號登入',
-    cookie: 'Spotify',
-    uid: 'Apple Music'
+    cookie: 'Spotify'
   },
   qrTip: '使用 Google 帳號登入以同步 YouTube Music',
-  phoneTip: '使用 Google、Spotify 或 Apple ID 登入',
+  phoneTip: '使用 Google 或 Spotify 登入',
   tokenTip: '貼上你的 Spotify 應用 Client ID（回呼位址：http://127.0.0.1:8898/callback）',
-  uidTip: '貼上 MusicKit 開發者權杖或 .p8 私鑰，然後使用 Apple ID 登入',
   placeholder: {
     phone: '手機號',
     password: '密碼',
-    cookie: 'Spotify Client ID',
-    uid: 'MusicKit 開發者權杖或 .p8 私鑰',
-    appleTeamId: 'Apple Team ID',
-    appleKeyId: 'MusicKit Key ID'
+    cookie: 'Spotify Client ID'
   },
   button: {
-    login: '使用 Apple ID 登入',
+    login: '登入',
     switchToQr: 'YouTube Music',
     switchToPhone: '手機號登入',
     switchToToken: 'Spotify',
-    switchToUid: 'Apple Music',
     backToQr: '返回 YouTube Music',
     cookieLogin: '使用 Spotify 登入',
     autoGetCookie: '取得 Spotify Client ID',
@@ -35,14 +29,10 @@ export default {
     loginSuccess: '登入成功',
     loginFailed: '登入失敗',
     tokenLoginSuccess: '已連接 Spotify',
-    uidLoginSuccess: '已連接 Apple Music',
     loadError: '無法開啟登入視窗',
     qrCheckError: '檢查登入狀態出錯',
     tokenRequired: '請輸入 Spotify Client ID',
     tokenInvalid: 'Spotify 登入失敗，請檢查 Client ID 和回呼位址',
-    uidRequired: '請輸入 MusicKit 開發者權杖',
-    uidInvalid: 'Apple ID 登入已取消或開發者權杖無效',
-    uidLoginFailed: 'Apple ID 登入失敗',
     phoneRequired: '請輸入手機號',
     passwordRequired: '請輸入密碼',
     phoneLoginFailed: '登入失敗',
@@ -62,7 +52,5 @@ export default {
     googleWaiting: '請在新視窗中完成 Google 登入…',
     googleLoginCancelled: '已取消 Google 登入'
   },
-  qrTitle: '使用 Google 登入',
-  uidWarning:
-    'Apple Music 登入需要 Apple 開發者帳號的 MusicKit 權杖。公開的 Apple Music 播放清單連結無需登入即可匯入。'
+  qrTitle: '使用 Google 登入'
 };

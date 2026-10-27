@@ -2,27 +2,21 @@ export default {
   title: {
     qr: 'YouTube Music',
     phone: '手机号登录',
-    cookie: 'Spotify',
-    uid: 'Apple Music'
+    cookie: 'Spotify'
   },
   qrTip: '使用 Google 账号登录以同步 YouTube Music',
-  phoneTip: '使用 Google、Spotify 或 Apple ID 登录',
+  phoneTip: '使用 Google 或 Spotify 登录',
   tokenTip: '粘贴你的 Spotify 应用 Client ID（回调地址：http://127.0.0.1:8898/callback）',
-  uidTip: '粘贴 MusicKit 开发者令牌或 .p8 私钥，然后使用 Apple ID 登录',
   placeholder: {
     phone: '手机号',
     password: '密码',
-    cookie: 'Spotify Client ID',
-    uid: 'MusicKit 开发者令牌或 .p8 私钥',
-    appleTeamId: 'Apple Team ID',
-    appleKeyId: 'MusicKit Key ID'
+    cookie: 'Spotify Client ID'
   },
   button: {
-    login: '使用 Apple ID 登录',
+    login: '登录',
     switchToQr: 'YouTube Music',
     switchToPhone: '手机号登录',
     switchToToken: 'Spotify',
-    switchToUid: 'Apple Music',
     backToQr: '返回 YouTube Music',
     cookieLogin: '使用 Spotify 登录',
     autoGetCookie: '获取 Spotify Client ID',
@@ -35,14 +29,10 @@ export default {
     loginSuccess: '登录成功',
     loginFailed: '登录失败',
     tokenLoginSuccess: '已连接 Spotify',
-    uidLoginSuccess: '已连接 Apple Music',
     loadError: '无法打开登录窗口',
     qrCheckError: '检查登录状态出错',
     tokenRequired: '请输入 Spotify Client ID',
     tokenInvalid: 'Spotify 登录失败，请检查 Client ID 和回调地址',
-    uidRequired: '请输入 MusicKit 开发者令牌',
-    uidInvalid: 'Apple ID 登录已取消或开发者令牌无效',
-    uidLoginFailed: 'Apple ID 登录失败',
     phoneRequired: '请输入手机号',
     passwordRequired: '请输入密码',
     phoneLoginFailed: '登录失败',
@@ -62,7 +52,5 @@ export default {
     googleWaiting: '请在新窗口中完成 Google 登录…',
     googleLoginCancelled: '已取消 Google 登录'
   },
-  qrTitle: '使用 Google 登录',
-  uidWarning:
-    'Apple Music 登录需要 Apple 开发者账号的 MusicKit 令牌。公开的 Apple Music 歌单链接无需登录即可导入。'
+  qrTitle: '使用 Google 登录'
 };

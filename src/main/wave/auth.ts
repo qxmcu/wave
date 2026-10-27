@@ -1,12 +1,11 @@
 import { BrowserWindow, ipcMain, safeStorage, session } from 'electron';
 
 import * as accounts from './accounts';
-import * as apple from './apple';
 import { onAccountsChanged } from './routes';
 import * as spotify from './spotify';
 
 /**
- * Sign-in windows for Google (YouTube Music), Spotify and Apple ID.
+ * Sign-in windows for Google (YouTube Music) and Spotify.
  * Results are stored by `accounts` and announced to the renderer with
  * the `wave-auth-changed` event so playlists re-sync immediately.
  */
@@ -33,7 +32,6 @@ export const secretBox: accounts.SecretBox = {
       : cipher
 };
 
-let apiPort = 30488;
 const notify = (service: string) => {
   onAccountsChanged();
   BrowserWindow.getAllWindows().forEach((w) =>
@@ -155,61 +153,12 @@ function spotifySignIn(clientId: string, parent?: BrowserWindow): Promise<boolea
   });
 }
 
-// ─── Apple ID (MusicKit) ────────────────────────────────────────────────
-
-function appleSignIn(parent?: BrowserWindow): Promise<boolean> {
-  return new Promise((resolve) => {
-    const token = apple.developerToken();
-    if (!token) {
-      resolve(false);
-      return;
-    }
-    const win = new BrowserWindow({
-      parent,
-      width: 520,
-      height: 720,
-      title: 'Sign in with Apple ID',
-      autoHideMenuBar: true,
-      webPreferences: { partition: 'persist:wave-apple', sandbox: true, contextIsolation: true }
-    });
-    let done = false;
-    const finish = (ok: boolean) => {
-      if (done) return;
-      done = true;
-      if (!win.isDestroyed()) win.destroy();
-      resolve(ok);
-    };
-    // MusicKit opens the Apple ID page as a popup and talks back via postMessage
-    win.webContents.setWindowOpenHandler(() => ({
-      action: 'allow',
-      overrideBrowserWindowOptions: { width: 520, height: 720, autoHideMenuBar: true, parent: win }
-    }));
-    win.on('page-title-updated', (event, title) => {
-      event.preventDefault();
-      if (title.startsWith('wave-token:')) {
-        apple.setAppleCredentials(
-          { ...apple.getAppleCredentials(), musicUserToken: title.slice(11) },
-          true
-        );
-        notify('am');
-        finish(true);
-      } else if (title === 'wave-error') {
-        finish(false);
-      }
-    });
-    win.on('closed', () => finish(false));
-    win.loadURL(`http://127.0.0.1:${apiPort}/wave/auth/apple/page`);
-  });
-}
-
 // ─── IPC ────────────────────────────────────────────────────────────────
 
-export function initializeWaveAuth(port: number) {
-  apiPort = port;
+export function initializeWaveAuth() {
   ipcMain.handle('wave-auth-status', () => ({
     signedIn: accounts.signedInServices(),
-    spotifyClientId: accounts.getSpotifyClientId(),
-    appleConfigured: Boolean(apple.developerToken())
+    spotifyClientId: accounts.getSpotifyClientId()
   }));
   ipcMain.handle('wave-google-login', (event) =>
     googleSignIn(BrowserWindow.fromWebContents(event.sender) || undefined)
@@ -219,13 +168,7 @@ export function initializeWaveAuth(port: number) {
     if (!id) return false;
     return spotifySignIn(id, BrowserWindow.fromWebContents(event.sender) || undefined);
   });
-  ipcMain.handle('wave-apple-login', (event, creds?: apple.AppleCredentials) => {
-    if (creds && (creds.developerToken || creds.privateKey)) {
-      apple.setAppleCredentials({ ...apple.getAppleCredentials(), ...creds }, true);
-    }
-    return appleSignIn(BrowserWindow.fromWebContents(event.sender) || undefined);
-  });
-  ipcMain.handle('wave-signout', async (_event, service: 'yt' | 'sp' | 'am' | 'all') => {
+  ipcMain.handle('wave-signout', async (_event, service: 'yt' | 'sp' | 'all') => {
     if (service === 'yt' || service === 'all') {
       await session.fromPartition(GOOGLE_PARTITION).clearStorageData();
     }

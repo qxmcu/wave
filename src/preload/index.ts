@@ -33,8 +33,6 @@ const api = {
   openLyric: () => ipcRenderer.send('open-lyric'),
   sendLyric: (data) => ipcRenderer.send('send-lyric', data),
   sendSong: (data) => ipcRenderer.send('update-current-song', data),
-  unblockMusic: (id, data, enabledSources) =>
-    ipcRenderer.invoke('unblock-music', id, data, enabledSources),
   importCustomApiPlugin: () => ipcRenderer.invoke('import-custom-api-plugin'),
   importLxMusicScript: () => ipcRenderer.invoke('import-lx-music-script'),
   importMusicSourcePlugin: () => ipcRenderer.invoke('import-music-source-plugin'),

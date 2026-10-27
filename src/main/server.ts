@@ -1,23 +1,11 @@
-import { app, ipcMain } from 'electron';
+import { app } from 'electron';
 import path from 'path';
 
 import { getSharedStore } from './modules/config';
-import { type Platform, unblockMusic } from './unblockMusic';
 import { startWaveApi } from './wave';
 import { initializeWaveAuth, secretBox } from './wave/auth';
 
 const store = getSharedStore();
-
-// 设置音乐解析的处理程序
-ipcMain.handle('unblock-music', async (_event, id, songData, enabledSources) => {
-  try {
-    const result = await unblockMusic(id, songData, 1, enabledSources as Platform[]);
-    return result;
-  } catch (error) {
-    console.error('音乐解析失败:', error);
-    return { error: (error as Error).message || '未知错误' };
-  }
-});
 
 /**
  * 检查端口是否可用
@@ -69,7 +57,7 @@ async function startMusicApi(): Promise<void> {
       dataDir: path.join(app.getPath('userData'), 'wave'),
       secretBox
     });
-    initializeWaveAuth(port);
+    initializeWaveAuth();
     console.log(`MUSIC API STARTED on port ${port}`);
   } catch (error) {
     console.error(`MUSIC API 启动失败:`, error);

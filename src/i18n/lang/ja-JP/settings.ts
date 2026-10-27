@@ -311,7 +311,7 @@ export default {
     manualUpdate: '手動更新',
     gotoGithub: 'Githubへ',
     author: '作者',
-    authorDesc: 'algerkong スターを付けてください🌟',
+    authorDesc: 'Wave（UI は algerkong 氏の AlgerMusicPlayer がベース）',
     messages: {
       checkError: '更新確認に失敗しました。後でもう一度お試しください'
     }

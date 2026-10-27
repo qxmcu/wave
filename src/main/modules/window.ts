@@ -395,7 +395,9 @@ export function createMainWindow(icon: Electron.NativeImage): BrowserWindow {
     preload: join(__dirname, '../preload/index.js'),
     sandbox: false,
     contextIsolation: true,
-    webSecurity: false
+    webSecurity: false,
+    // No text fields need it; skips loading spellcheck dictionaries
+    spellcheck: false
   };
 
   console.log(

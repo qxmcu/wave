@@ -631,6 +631,7 @@ export async function getAudioStream(videoId: string, video = false): Promise<St
         expiresAt: expire || Date.now() + 5 * 3600_000
       };
       streamCache.set(cacheKey, info);
+      if (streamCache.size > 200) streamCache.delete(streamCache.keys().next().value!);
       return info;
     } catch (error) {
       lastError = error;

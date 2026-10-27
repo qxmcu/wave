@@ -24,7 +24,8 @@ export interface JsonFile<T> {
 
 const openFiles = new Map<string, JsonFile<any>>();
 
-export function jsonFile<T>(name: string, defaults: T): JsonFile<T> {
+/** `delayMs` batches writes; large, frequently touched files should use a longer delay. */
+export function jsonFile<T>(name: string, defaults: T, delayMs = 1000): JsonFile<T> {
   const existing = openFiles.get(name);
   if (existing) return existing as JsonFile<T>;
 
@@ -55,7 +56,7 @@ export function jsonFile<T>(name: string, defaults: T): JsonFile<T> {
   };
   const save = () => {
     if (timer) return;
-    timer = setTimeout(flush, 1000);
+    timer = setTimeout(flush, delayMs);
   };
 
   const handle: JsonFile<T> = { data, save, flush };

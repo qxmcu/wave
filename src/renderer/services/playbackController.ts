@@ -132,7 +132,7 @@ const updateDocumentTitle = (music: SongResult): void => {
       ''
     )}`;
   }
-  document.title = 'AlgerMusic - ' + title;
+  document.title = 'Wave - ' + title;
 };
 
 // ==================== 导出函数 ====================
